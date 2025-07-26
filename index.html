@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rudhir - Blood Donation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Global Styles */
+        :root {
+            --primary-color: #e74c3c;
+            --secondary-color: #c0392b;
+            --text-color: #333;
+            --bg-color: #fff;
+            --card-bg: #f9f9f9;
+            --header-bg: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7));
+            --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --vol-bg: #f9f9f9;
+            --footer-bg: #222;
+            --footer-text: #fff;
+        }
+
+        .dark-mode {
+            --primary-color: #ff6b6b;
+            --secondary-color: #d63031;
+            --text-color: #f0f0f0;
+            --bg-color: #222;
+            --card-bg: #333;
+            --header-bg: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8));
+            --shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+            --vol-bg: #333;
+            --footer-bg: #111;
+            --footer-text: #ddd;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        /* Mode Toggler */
+        .mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .mode-toggle i {
+            margin-right: 5px;
+        }
+
+        /* Preloader */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        /* Scroll to top */
+        #myBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            display: none;
+            z-index: 99;
+            box-shadow: var(--shadow);
+        }
+
+        /* Header */
+        header {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: white;
+        }
+
+        /* Slideshow Styles */
+        .slideshow-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        #logo {
+            padding: 10px 20px;
+            z-index: 10;
+        }
+
+        #logo img {
+            height: 100px;
+            width: auto;
+        }
+
+        #nav {
+            display: flex;
+            justify-content: flex-end;
+            padding: 20px;
+            z-index: 10;
+        }
+
+        .header-list ul {
+            display: flex;
+            list-style: none;
+        }
+
+        .header-list ul li {
+            margin: 0 15px;
+        }
+
+        .header-list ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 18px;
+            position: relative;
+        }
+
+        .header-list ul li a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            left: 0;
+            bottom: -5px;
+            transition: width 0.3s;
+        }
+
+        .header-list ul li a:hover:after {
+            width: 100%;
+        }
+
+        .fa-bars, .fa-times {
+            display: none;
+            cursor: pointer;
+        }
+
+        .text-box {
+            margin: auto;
+            text-align: center;
+            padding: 0 20px;
+            z-index: 10;
+        }
+
+        .text-box h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .text-box p {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            animation: fadeInUp 1.2s ease-out;
+        }
+
+        .hero-btn {
+            display: inline-block;
+            text-decoration: none;
+            color: white;
+            border: 2px solid white;
+            padding: 12px 34px;
+            font-size: 1.2rem;
+            background: transparent;
+            position: relative;
+            transition: 0.5s;
+            animation: fadeInUp 1.4s ease-out;
+        }
+
+        .hero-btn:hover {
+            background: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        /* About Section */
+        #about-us {
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .heading {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .head-des {
+            font-size: 1.2rem;
+            margin-bottom: 50px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 50px;
+        }
+
+        .about-col {
+            flex-basis: calc(33.33% - 20px);
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 30px 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            transform: translateY(50px);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .about-col.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .about-col:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .image {
+            height: 100px;
+            width: 100px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .about-col h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .about-col p {
+            line-height: 1.6;
+        }
+
+        /* Volunteer Section */
+        .volunteer {
+            background-color: var(--vol-bg);
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .title-head {
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+        }
+
+        .content {
+            max-width: 800px;
+            margin: 0 auto 50px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .volunt {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .vol {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: var(--shadow);
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .vol.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .vol:hover {
+            transform: translateX(10px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .vol-i {
+            padding: 10px;
+        }
+
+        .number {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            flex-grow: 1;
+        }
+
+        .location {
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .blood {
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Testimonials */
+        .customer-review {
+            padding: 80px 20px;
+            background-color: var(--bg-color);
+        }
+
+        .row-customer {
+            max-width: 1140px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .row-customer h2 {
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+            color: var(--primary-color);
+        }
+
+        .row-customer:nth-child(2) {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .col-customer {
+            flex-basis: calc(33.33% - 30px);
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.6s ease;
+        }
+
+        .col-customer.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .customer-box {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .customer-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .customer-text-box {
+            font-style: italic;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .customer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .customer img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+
+        .customer p {
+            font-weight: 600;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--footer-bg);
+            color: var(--footer-text);
+            padding: 60px 20px 20px;
+        }
+
+        .siteFooterBar {
+            border-top: 1px solid #444;
+            padding-top: 20px;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-content h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .footer-content p {
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .socials .sci {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+        }
+
+        .sci li {
+            margin: 0 10px;
+        }
+
+        .sci li a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .sci li a:hover {
+            transform: translateY(-10px);
+            background: var(--secondary-color);
+        }
+
+        .foot {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .about-col, .col-customer {
+                flex-basis: 100%;
+            }
+            
+            .header-list ul {
+                flex-direction: column;
+                position: fixed;
+                right: -210px;
+                top: 0;
+                background: var(--primary-color);
+                height: 100vh;
+                width: 200px;
+                padding-top: 50px;
+                z-index: 100;
+                transition: 0.5s;
+            }
+            
+            .header-list ul li {
+                margin: 20px 0;
+            }
+            
+            .fa-bars, .fa-times {
+                display: block;
+                font-size: 22px;
+                margin: 10px 20px;
+                color: white;
+            }
+            
+            .fa-times {
+                position: absolute;
+                top: 20px;
+                left: 20px;
+            }
+            
+            .text-box h1 {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Preloader -->
+    <div class="preloader">
+        <img src="pre-loader.svg" alt="spinner">
+    </div>
+
+    <!-- Dark/Light Mode Toggle -->
+    <button class="mode-toggle" id="modeToggle">
+        <i class="fas fa-moon"></i> Dark Mode
+    </button>
+
+    <!-- Scroll to top button -->
+    <button onclick="topFunction()" id="myBtn" class="fas fa-arrow-up"></button>
+    
+    <!-- Home Page -->
+    <header>
+        <div class="slideshow-container">
+            <div class="slide active" style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('1.jpg')"></div>
+            <div class="slide" style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('2.jpeg')"></div>
+            <div class="slide" style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('4.jpg')"></div>
+            <div class="slide" style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('5.jpeg')"></div>
+            <div class="slide" style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('6.jpg')"></div>
+            <div class="slide" style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('7.jpeg')"></div>
+        </div>
+        
+        <div id="logo">
+            <a href="index.html"><img src="bb_logo(white).png" alt="Rudhir Logo"></a>
+        </div>
+        <div id="nav">
+            <div class="header-list" id="headerl">
+                <i class="fa fa-times" onclick="hideMenu()"></i>
+                <ul>
+                    <li><a class="scroll" href="#about-us">About Us</a></li>
+                    <li><a class="scroll" href="#vol-sect">Volunteers</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="help.html">FAQs</a></li>
+                </ul>
+            </div>
+            <i class="fa fa-bars" onclick="showMenu()"></i>
+        </div>
+        <div class="text-box">
+            <h1>Start</h1>
+            <h1>Saving Lives</h1>
+            <p>Become a donor or request for blood And help save lives</p>
+            <a href='Register.html' class="hero-btn">Register</a>
+        </div>
+    </header>
+
+    <!-- About Us Section -->
+    <section id="about-us">
+        <div class="about">
+            <h1 class="heading">What is this all about?</h1>
+            <p class="head-des">We solve the problem of blood emergencies by connecting blood banks, donors and people in blood need directly.</p>
+            <div class="row">
+                <div class="about-col">
+                    <div class="image">
+                        <img src="drop.png" alt="What we do">
+                    </div>
+                    <h3>What we do?</h3>
+                    <p>We provide a platform where you can find and access nearest blood bank or donor with availability according to your need in hard times.</p>
+                </div>
+                <div class="about-col">
+                    <div class="image">
+                        <img src="innovation.png" alt="Innovative">
+                    </div>
+                    <h3>Innovative</h3>
+                    <p>Rudhir is an innovative approach to address the problem of blood arrangement in emergency situations.</p>
+                </div>
+                <div class="about-col">
+                    <div class="image">
+                        <img src="netwotk.png" alt="Network">
+                    </div>
+                    <h3>Network</h3>
+                    <p>Rudhir is one of several community organizations working together as a network that responds to emergencies in an efficient manner.</p>
+                </div>
+                <div class="about-col">
+                    <div class="image">
+                        <img src="noti.png" alt="Get notified">
+                    </div>
+                    <h3>Get notified</h3>
+                    <p>Rudhir Connect works with network partners to connect blood banks or blood donors and recipients in need.</p>
+                </div>
+                <div class="about-col">
+                    <div class="image">
+                        <img src="cost.png" alt="Totally Free">
+                    </div>
+                    <h3>Totally Free</h3>
+                    <p>Rudhir's ultimate goal is to provide an easy-to-use, easy-to-access, fast, efficient, and reliable way to get life-saving blood, totally <span>Free of cost.</span></p>
+                </div>
+                <div class="about-col">
+                    <div class="image">
+                        <img src="save.png" alt="Save Life">
+                    </div>
+                    <h3>Save Life</h3>
+                    <p>We are a non profit foundation and our main objective is to make sure that everything is done to protect vulnerable persons. <span>We depend on your donations for our operations, so any small help would be appreciated</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Volunteer Section -->
+    <div class="volunteer" id="vol-sect">
+        <div class="title-head">
+            <h1 class="title">Our super heroes</h1>
+        </div>
+        <p class="content">We depend on volunteers! Volunteers make up 96% of our total workforce and carry on our humanitarian work. Blood donation is healthy, our volunteers are available 24/7 to help and donate blood. Blood banks store blood bags but our volunteers are there with you in an emergency for a blood transfusion real time.</p>
+        <ul class="volunt">
+            <li class="vol">
+                <span class="vol-i number">1</span>
+                <span class="vol-i name">Garvit</span>
+                <span class="vol-i location">Delhi,<br>India</span>
+                <span class="vol-i blood">O+ <i class="fa fa-tint" aria-hidden="true"></i></span>
+            </li>
+            <li class="vol">
+                <span class="vol-i number">2</span>
+                <span class="vol-i name">Mehere kaur</span>
+                <span class="vol-i location">Ghaziabad,<br>Uttar Pradesh</span>
+                <span class="vol-i blood">B+ <i class="fa fa-tint" aria-hidden="true"></i></span>
+            </li>
+            <li class="vol">
+                <span class="vol-i number">3</span>
+                <span class="vol-i name">Kenny</span>
+                <span class="vol-i location">Kerela,<br>India</span>
+                <span class="vol-i blood">AB+ <i class="fa fa-tint" aria-hidden="true"></i></span>
+            </li>
+            <li class="vol">
+                <span class="vol-i number">4</span>
+                <span class="vol-i name">Sarah</span>
+                <span class="vol-i location">Tamil Nadu,<br>India</span>
+                <span class="vol-i blood">A+ <i class="fa fa-tint" aria-hidden="true"></i></span>
+            </li>
+            <li class="vol">
+                <span class="vol-i number">5</span>
+                <span class="vol-i name">Kenneth</span>
+                <span class="vol-i location">Ayodhya,<br>Uttar Pradesh</span>
+                <span class="vol-i blood">O+ <i class="fa fa-tint" aria-hidden="true"></i></span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Testimonials -->
+    <section class="customer-review">
+        <div class="row-customer">
+            <h2>Testimonials<br>See what our users have to say</h2>
+        </div>
+        <div class="row-customer">
+            <div class="col-customer">
+                <div class="customer-box">
+                    <div class="customer-text-box">
+                        Rudhir is just awesome! I just donated for the first time and it could not have been
+                        easier. Rudhir is doing a very important work and I'm happy that I could contribute. It's
+                        hygienic, safe and convenient, I recommend it to everyone!
+                    </div>
+                    <div class="customer">
+                        <img src="review-3.PNG" alt="Customer photo">
+                        <p>Esha Puri</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-customer">
+                <div class="customer-box">
+                    <div class="customer-text-box">
+                        I found Rudhir at a time that my mother was in urgent need of blood. Rudhir arranged the
+                        required amount in no time. It saved us a lot of hassle and worry especially in such a trying
+                        time.<br> Thank you Rudhir!
+                    </div>
+                    <div class="customer">
+                        <img src="review-2.PNG" alt="Customer photo">
+                        <p>Amit Mangal</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-customer">
+                <div class="customer-box">
+                    <div class="customer-text-box">
+                        I have been a part of this organization for quite some time and each time I'm amazed by the seamless
+                        and efficient system in place. The importance of timely care especially in the recent times is known
+                        and having Rudhir takes a load off my mind.
+                    </div>
+                    <div class="customer">
+                        <img src="review-1.PNG" alt="Customer photo">
+                        <p>Dr.Kabir Khatri</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <h3>JOIN OUR CAUSE</h3>
+            <p>Donating blood or platelets can be intimidating and even scary. Time to put those hesitations
+                and fears aside. Learn from Rudhir and platelet donors how simple and easy it is to roll up a
+                sleeve and help save lives.</p>
+            <div class="socials">
+                <ul class="sci">
+                    <li><a href="https://www.facebook.com/givebloodnhs/" target="_blank"><i class="fab fa-facebook"></i></a></li>
+                    <li><a href="https://www.instagram.com/indiablooddonation/?hl=en" target="_blank"><i class="fab fa-instagram"></i></a></li>
+                    <li><a href="http://nbtc.naco.gov.in/" target="_blank"><i class="fas fa-globe"></i></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="siteFooterBar">
+            <div class="content1">
+                <div class="foot">2025 © All rights reserved.</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Preloader
+        window.addEventListener('load', function() {
+            const preloader = document.querySelector('.preloader');
+            const fadeEffect = setInterval(() => {
+                if (!preloader.style.opacity) {
+                    preloader.style.opacity = 1;
+                }
+                if (preloader.style.opacity > 0) {
+                    preloader.style.opacity -= 0.1;
+                } else {
+                    clearInterval(fadeEffect);
+                    preloader.style.display = 'none';
+                }
+            }, 200);
+            
+            // Initialize slideshow after page loads
+            startSlideshow();
+        });
+
+        // Slideshow functionality
+        function startSlideshow() {
+            const slides = document.querySelectorAll('.slide');
+            let currentSlide = 0;
+            
+            function showSlide(index) {
+                slides.forEach(slide => slide.classList.remove('active'));
+                slides[index].classList.add('active');
+            }
+            
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+            }
+            
+            // Start the slideshow - change slide every 5 seconds
+            setInterval(nextSlide, 5000);
+        }
+
+        // Scroll to top
+        let mybutton = document.getElementById("myBtn");
+        window.onscroll = function() {scrollFunction()};
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+            
+            // Animation for cards on scroll
+            animateOnScroll();
+        }
+
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+
+        // Toggle Menu
+        function showMenu() {
+            document.getElementById("headerl").style.right = "0";
+        }
+
+        function hideMenu() {
+            document.getElementById("headerl").style.right = "-210px";
+        }
+
+        // Dark/Light Mode Toggle
+        const modeToggle = document.getElementById('modeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            body.classList.add('dark-mode');
+            modeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+        }
+        
+        modeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            
+            // Update button text
+            if (body.classList.contains('dark-mode')) {
+                modeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                modeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+                localStorage.setItem('darkMode', null);
+            }
+        });
+
+        // Animate on scroll
+        function animateOnScroll() {
+            const aboutCols = document.querySelectorAll('.about-col');
+            const volunteers = document.querySelectorAll('.vol');
+            const testimonials = document.querySelectorAll('.col-customer');
+            
+            aboutCols.forEach(col => {
+                const colTop = col.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                if (colTop < windowHeight - 100) {
+                    col.classList.add('active');
+                }
+            });
+            
+            volunteers.forEach(vol => {
+                const volTop = vol.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                if (volTop < windowHeight - 100) {
+                    vol.classList.add('active');
+                }
+            });
+            
+            testimonials.forEach(testimonial => {
+                const testTop = testimonial.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                if (testTop < windowHeight - 100) {
+                    testimonial.classList.add('active');
+                }
+            });
+        }
+
+        // Initialize animations on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                animateOnScroll();
+            }, 500);
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a.scroll').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                window.scrollTo({
+                    top: targetElement.offsetTop,
+                    behavior: 'smooth'
+                });
+                
+                // Hide mobile menu if open
+                if (window.innerWidth < 768) {
+                    hideMenu();
+                }
+            });
+        });
+        function startSlideshow() {
+            const slides = document.querySelectorAll('.slide');
+            let currentSlide = 0;
+            
+            function showSlide(index) {
+                slides.forEach(slide => slide.classList.remove('active'));
+                slides[index].classList.add('active');
+            }
+            
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+            }
+            
+            // Change slide every 5 seconds
+            setInterval(nextSlide, 5000);
+        }
+        
+        // Start slideshow when DOM content is loaded
+        document.addEventListener('DOMContentLoaded', startSlideshow);
+
+    </script>
+</body>
+</html>
