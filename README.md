@@ -30,12 +30,11 @@ FOR BACKEND
 
 ## Credits
 
- - [Srijan Pusp](https://www.linkedin.com/in/srijanpusp/)
+ 
  - [Hritik Tiwari](https://www.linkedin.com/in/hritik-tiwari-577887239/)
-  - [Dhruv Jha](https://www.linkedin.com/in/dhruv-jha-a33b51240/)
-   - [Harshit Somvanshi](https://www.linkedin.com/in/harshit-somvanshi-a63513258/)
-   - [Aditya Kumar Tiwari](https://www.linkedin.com/in/akt11/)
+  
 ## Feedback
 
-If you have any feedback, please reach out to us at puspsrijan@gmail.com
+If you have any feedback, please reach out to us at thritik0001@gmail.com
+
 
